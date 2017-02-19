@@ -4,7 +4,7 @@
  * Express Dependencies
  */
 var neo4j = require('neo4j-driver').v1;
-var driver = neo4j.driver('bolt://localhost:7687/', neo4j.auth.basic('neo4j', 'L@gn@f2016'));
+var driver = neo4j.driver('bolt://localhost:7687/', neo4j.auth.basic('neo4j', 'neo4j'));
 
 var express = require('express');
 var app = express();
