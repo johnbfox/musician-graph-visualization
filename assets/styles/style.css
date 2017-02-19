@@ -1,0 +1,161 @@
+body{
+  font-family: 'Open Sans', sans-serif;
+  height: 100%;
+  padding-left: 12px;
+  padding-right: 12px;
+  background-color:rgb(254,254,254) ;
+}
+
+p{
+  font-size: 16px;
+}
+
+.top-margin{
+  margin-top:12px;
+}
+
+.top-margin--double{
+  margin-top:24px;
+}
+
+.left-margin{
+  margin-left: 12px;
+}
+
+.left-margin--half{
+  margin-left: 6px;
+}
+
+.right-margin{
+  margin-right: 12px;
+}
+
+.left{
+  min-width:400px;
+  display: flex;
+  flex-direction: column;
+  padding-left: 24px;
+  align-items: center;
+  justify-content: center;
+  padding-right: 24px;
+}
+
+.left-one{
+  align-self: center;
+}
+
+#app{
+  margin: auto;
+  max-width: 1200px;
+  display: flex;
+  padding-top: 12px;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#degreeChart{
+  padding: 12px;
+}
+
+#graphVis{
+  border: solid;
+  border-color: #d0d0d0;
+  border-width: thin;
+   box-shadow: 1px 1px 1px #888888;
+}
+
+#degreeDescription{
+  font-size: 20px;
+  font-weight: strong;
+}
+
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.6;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+input{
+  border:none;
+  border-bottom:solid;
+  border-bottom-width: 1px;
+  padding: 6px;
+  font-size: 18px;
+  font-color: #F9F9F9;
+  text-align: center;
+  background-color:rgb(254,254,254);
+}
+
+input:focus{
+    border-left: none;
+    border-right: none
+}
+
+svg{
+  display: block;
+  margin: auto;
+  background-color: #FFFFFF;
+}
+#searchForm{
+  display: block;
+  max-width: 265px;
+  padding-top: 24px;
+  margin: auto;
+}
+
+#searchButton{
+  margin-top: 8px;
+  margin-left: -4px;
+  padding-bottom: 6px;
+  padding-right: 12px;
+  border-bottom: solid;
+  border-bottom-width: 1px;
+  width: 30px;
+}
+
+#searchButton:hover{
+  cursor: pointer;
+}
+
+.autocomplete{
+  list-style: none;
+  position: absolute;
+  border-left: solid;
+  border-right:solid;
+  border-bottom: solid;
+  border-left-width: thin;
+  border-right-width: thin;
+  border-bottom-width: thin;
+  background-color: #FFFFFF;
+  width: 245px;
+  padding-left: 0px;
+}
+
+.autocomplete__suggestion{
+  padding-top: 6px;
+  padding-bottom:6px;
+  padding-left: 12px;
+}
+
+.autocomplete__suggestion:hover, .active{
+  cursor: pointer;
+  background-color: #f9f9f9;
+}
+
+p.description-block{
+  max-width: 640px;
+  margin: auto;
+  display: block;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+input:focus{
+  outline:0px !important;
+  -webkit-appearance:none;
+}

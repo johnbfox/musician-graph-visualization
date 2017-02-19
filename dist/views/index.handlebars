@@ -1,0 +1,18 @@
+<div class="container" ng-app="myApp" ng-controller="myCtrl">
+    <h1>Musician Graph</h1>
+    <form ng-submit="submit()">
+      <fieldset>
+        <label for="from">From:</label>
+        <input type="text" id="from" ng-model="fromArtist"/>
+        <label for="to">To:</label>
+        <input type="text" id="to" ng-model="toArtist"/>
+        <button type="submit">Search</button>
+      </fieldset>
+    </form>
+
+    <ul ng-show="path">
+      <li ng-repeat="val in path">
+        <a ng-bind="val" ng-href="https://en.wikipedia.org/wiki/{[{val}]}" target="_blank"></a>
+      </li>
+    </ul>
+</div>

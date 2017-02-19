@@ -1,0 +1,35 @@
+<div id="app" ng-app="myApp" ng-controller="myCtrl">
+  <div class="left">
+    <div class="left-one">
+      <h2 class="text-center">The Musician Network</h2>
+      <h5 class="text-center">By <a href="http://www.johnbfox.com/">John Fox</a></h5>
+      <form id="searchForm" ng-submit="submitGraph()">
+        <input type="text" id="from" ng-model="graphArtist" ng-keydown="focusAutocomplete($event)" autocomplete="off"/>
+        <img id="searchButton" ng-click="submitGraph()" src="images/search-icon.png"/>
+        <ul class="autocomplete" ng-show="isAutocompleteShowing">
+          <li class="autocomplete__suggestion" ng-repeat="item in names" ng-class="{active: item.active}" ng-click="submitGraph(item.name)">
+            {[{ item.name }]}
+          </li>
+        </ul>
+      </form>
+      <p class="description-block">
+        Music is a collaborative art.  They play, create, and perform with other musicians throughout
+        their careers.  Because of the extensive collaborations, a network of musicians forms.  Each
+        circle represents a musician, and a line between two circles reprents a direct collaboration
+        between two musicians.
+      </p>
+      <p class="description-block">
+        The data used is sourced from Wikipedia.  Most major musicians have a wikipedia page, each
+        one outlining associated acts.  The lines in this chart are derived from those associations.
+        Read the blog post to learn more about the process
+      </p>
+    </div>
+  </div>
+  <div class="right">
+    <div id="degreeChart" width="800px">
+      <div class="top-margin" id="graphContainer">
+        <svg id="graphVis" width="100%" height="600px"></svg>
+      </div>
+    </div>
+  </div>
+</div>
