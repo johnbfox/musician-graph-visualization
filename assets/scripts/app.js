@@ -7,7 +7,7 @@ app.config(function($interpolateProvider) {
 app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
 
     $scope.autoIndex = -1;
-    const colors = ['#53868B', '#87CEEB', '#D1EEEE']
+    const colors = ['#87CEEB', '#D1EEEE', '#D1EEEE']
 
     $scope.focusAutocomplete = function($event){
       if($scope.autoIndex > -1){
@@ -60,12 +60,12 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
 
       $http.get(url).then(function(response){
         var graph = response.data;
-        var gravity = -1* (2000/response.data.nodes.length);
-        console.log(gravity);
+        var gravity = -1* (3000/response.data.nodes.length);
+
         var svg = d3.select("#graphVis"),
             width = +svg.attr("width"),
             height = +svg.attr("height"),
-            radius = 6;
+            radius = 11;
 
         var color = d3.scaleOrdinal(d3.schemeCategory20);
 
@@ -86,7 +86,13 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
                       .selectAll("circle")
                       .data(graph.nodes)
                       .enter().append("circle")
-                      .attr("r", 6)
+                      .attr("r", function(d){
+                        if(d.id === $scope.graphArtist) {
+                          return radius;
+                        }else{
+                          return radius-(3*d.degree);
+                        }
+                      })
                       .attr("fill", function(d) {
                         if(d.id === $scope.graphArtist) {
                           return '#35586C';

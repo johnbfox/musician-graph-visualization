@@ -4,7 +4,7 @@
  * Express Dependencies
  */
 var neo4j = require('neo4j-driver').v1;
-var driver = neo4j.driver('bolt://localhost:7687/', neo4j.auth.basic('neo4j', 'neo4j'));
+var driver = neo4j.driver('bolt://localhost:7687/', neo4j.auth.basic('neo4j', 'L@gn@f2016'));
 
 var express = require('express');
 var app = express();
@@ -110,7 +110,7 @@ app.get('/getGraph/:id', function(request, response){
 
   var session = driver.session();
 
-  var query = `MATCH (a:Artist {name:{artist}})-[r*1..3]->(d) RETURN distinct a, r, d`;
+  var query = `MATCH (a:Artist {name:{artist}})-[r*1..2]->(d) RETURN distinct a, r, d`;
 
   session.run(query, {artist:artist}).then(function(result){
 
