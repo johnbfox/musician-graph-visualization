@@ -64,11 +64,11 @@ app.get('/', function(request, response) {
 app.get('/getConnection', function(request, response){
   var fromArtist = request.query.fromArtist;
   var toArtist = request.query.toArtist;
-  var query = `MATCH path = shortestPath((a:Artist { name:{fromArtist} })-[:LINK*]->(b:Artist { name:'${toArtist}' })) RETURN path, length(path) AS Steps`;
+  var query = `MATCH path = shortestPath((a:Artist { name:{fromArtist} })-[:LINK*]->(b:Artist { name:{toArtist} })) RETURN path, length(path) AS Steps`;
   var session = driver.session();
   var path = [];
 
-  session.run(query, {fromArtist: fromArtist}).then(function(result){
+  session.run(query, {fromArtist: fromArtist, toArtist: toArtist}).then(function(result){
      var segments = result.records[0]._fields[0].segments;
 
      for(let i = 0; i < segments.length; i++){
