@@ -86,6 +86,8 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
                       .selectAll("circle")
                       .data(graph.nodes)
                       .enter().append("circle")
+                      .attr('onmouseover', 'evt.target.setAttribute("stroke", "1");');
+                      .attr('onmouseoff', 'evt.target.setAttribute("stroke", "0");');
                       .attr("r", function(d){
                         if(d.id === $scope.graphArtist) {
                           return radius;
