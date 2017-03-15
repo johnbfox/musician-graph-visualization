@@ -87,7 +87,7 @@ app.get('/getNames/:name', function(request, response){
 
   var session = driver.session();
   var names = [];
-  var query = `MATCH (n:Artist) WHERE n.name STARTS WITH {name} return n LIMIT 10`;
+  var query = `MATCH (n:Artist) WHERE LOWER(n.name) CONTAINS LOWER({name}) return n LIMIT 10`;
 
   session.run(query, {name:name}).then(function(result){
     var records = result.records;
@@ -167,4 +167,4 @@ app.get('/getGraph/:id', function(request, response){
  * Start it up
  */
 app.listen(process.env.PORT || port);
-console.log('Express started on port ' + port);
+console.log('Express started on port ' + ( process.env.PORT || port ) );
