@@ -28,7 +28,7 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
     $scope.$watch('graphArtist', function(){
       $scope.autoIndex = -1;
       $scope.focusedArtist = undefined;
-      var url = `/getNames/${$scope.graphArtist}`;
+      var url = `/musician-graph/getNames/${$scope.graphArtist}`;
 
       $http.get(url).then(function(response){
         var autoNames = [];
@@ -48,7 +48,7 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
 
     $scope.submitGraph = function(name){
       $scope.graphArtist = $scope.focusedArtist || name;
-      var url = `/getGraph/${$scope.graphArtist}`;
+      var url = `/musician-graph/getGraph/${$scope.graphArtist}`;
       $scope.isAutocompleteShowing = false;
 
 
