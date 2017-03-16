@@ -4,7 +4,7 @@
       <h2 class="text-center">The Musician Network</h2>
       <h5 class="text-center">By <a href="http://www.johnbfox.com/">John Fox</a></h5>
       <form id="searchForm" ng-submit="submitGraph()">
-        <input type="text" id="from" ng-model="graphArtist" ng-keydown="focusAutocomplete($event)" autocomplete="off"/>
+        <input type="text" id="from" ng-model="graphArtist" ng-keydown="focusAutocomplete($event)" autocomplete="off" ng-model-options="{debounce: 750}"/>
         <img id="searchButton" ng-click="submitGraph()" src="images/search-icon.png"/>
         <ul class="autocomplete" ng-show="isAutocompleteShowing">
           <li class="autocomplete__suggestion" ng-repeat="item in names" ng-class="{active: item.active}" ng-click="submitGraph(item.name)">

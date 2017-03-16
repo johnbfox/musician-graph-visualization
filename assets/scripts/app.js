@@ -28,7 +28,7 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
     $scope.$watch('graphArtist', function(){
       $scope.autoIndex = -1;
       $scope.focusedArtist = undefined;
-      var url = `/musician-graph/getNames/${$scope.graphArtist}`;
+      var url = `/getNames/${$scope.graphArtist}`;
 
       $http.get(url).then(function(response){
         var autoNames = [];
@@ -48,8 +48,9 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
 
     $scope.submitGraph = function(name){
       $scope.graphArtist = $scope.focusedArtist || name;
-      var url = `/musician-graph/getGraph/${$scope.graphArtist}`;
+      var url = `/getGraph/${$scope.graphArtist}`;
       $scope.isAutocompleteShowing = false;
+
 
       var svg = d3.select('svg');
       svg.remove();
@@ -59,6 +60,22 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
          .attr('height', 600);
 
       $http.get(url).then(function(response){
+
+        var tooltip = d3.select('#graphContainer')
+            .append('div')
+            .attr('class', 'my-tooltip')
+            .style('position', 'absolute')
+            .style('z-index', '10')
+            .style('visibility', 'hidden')
+            .style('background-color', 'white')
+            .style('padding', '5px')
+            .style('border-style', 'solid')
+            .style('border-width', 'thin');
+
+        tooltip.append('div')
+            .attr('id', 'tt-name')
+            .text('simple');
+
         var graph = response.data;
         var gravity = -1* (4000/response.data.nodes.length);
 
@@ -103,26 +120,32 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
                           return colors[d.degree-1];
                         }
                       })
-                      .on('mouseover', function(){
+                      .on('mouseover', function(d){
+                        var cur = d3.select(this);
+                        var curY = cur.attr('cy');
+                        var curX = cur.attr('cx');
                         d3.select(this)
-            	           .attr("fill", "orange");
+            	           .attr('fill', 'orange');
+                         tooltip.select("#tt-name").text(d.id);
+                         return tooltip.style("visibility", "visible");
+                      })
+                      .on('mousemove', function(){
+                        return tooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX) + "px");
                       })
                       .on('mouseout', function(d){
                         if(d.id === $scope.graphArtist) {
                           d3.select(this)
-              	           .attr("fill", '#35586C');
+              	           .attr('fill', '#35586C');
                         }else{
                           d3.select(this)
-              	           .attr("fill", colors[d.degree-1]);
+              	           .attr('fill', colors[d.degree-1]);
                         }
+                        return tooltip.style('visibility', 'hidden');
                       })
                       .call(d3.drag()
                       .on('start', dragstarted)
                       .on('drag', dragged)
                       .on('end', dragended));
-
-                  node.append('title')
-                      .text(function(d) { return d.id; });
 
                   simulation.nodes(graph.nodes)
                             .on('tick', ticked);
@@ -144,89 +167,23 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
                     if (!d3.event.active) simulation.alphaTarget(0.3).restart();
                     d.fx = d.x;
                     d.fy = d.y;
+                    tooltip.style('visibility', 'hidden');
                   }
 
                   function dragged(d) {
                     d.fx = d3.event.x;
                     d.fy = d3.event.y;
+                    tooltip.style('visibility', 'hidden');
                   }
 
                   function dragended(d) {
                     if (!d3.event.active) simulation.alphaTarget(0);
                     d.fx = null;
                     d.fy = null;
+                    tooltip.style('visibility', 'hidden');
                   }
       });
     }
 
     $scope.submitGraph('Bob Dylan');
-
-    $scope.submitDegree = function(){
-      var url = `/getConnection?fromArtist=${$scope.fromArtist}&toArtist=${$scope.toArtist}`;
-      $http.get(url).then(function(response){
-        $scope.path = response.data.path;
-        $scope.degree = response.data.path.length - 1;
-
-        var barPlaceholder = [];
-        for(var i = 0; i < response.data.path.length-1; i++){
-          barPlaceholder.push('A');
-        }
-
-        var first = true;
-        var circleDistance = 96;
-        var textDistance = 72;
-        var barX = 55;
-        var circleX = 40;
-        var textX = 10;
-        var y = 50;
-        var radius = 15;
-        var color = '#6ac5a9';
-
-        var canvas = d3.select('#degreeVis svg');
-        canvas.remove();
-        canvas = d3.selectAll('#degreeVis')
-                   .append('svg')
-                   .attr('width', '100%')
-                   .attr('height', '100px');
-
-        var circles = canvas.selectAll('circle')
-                      .data(response.data.path)
-                      .enter()
-                      .append('circle');
-
-        var circleAttributes = circles
-                      .attr('cx', function (d) { console.log(d); var xTemp = circleX; circleX = circleX + circleDistance; return xTemp})
-                      .attr('cy', function (d) { return y; })
-                      .attr('r', function (d) { return radius; })
-                      .style('fill', function(d) { return color; });
-
-        var rects = canvas.selectAll('rect')
-                    .data(barPlaceholder)
-                    .enter()
-                    .append('rect');
-
-        var rectAttributes = rects.attr('x', function(d) { var tempX = barX; barX = barX + circleDistance; return tempX })
-                                  .attr('y', y-2)
-                                  .attr('width', 66)
-                                  .attr('height', 3)
-                                  .attr('fill', 'black');
-
-        var names = canvas.selectAll('text')
-                    .data(response.data.path)
-                    .enter()
-                    .append('text');
-
-        var nameAttributes = names.attr('x', function(d) { var xTemp = textX; textX = textX + 95; return xTemp })
-                             .attr('y', function(d) { return y-30; })
-                             .text( function (d) { return d; })
-                             .attr('font-family', 'sans-serif')
-                             .attr('font-size', '11px')
-                             .attr('fill', 'black');
-
-
-      }, function(error){
-
-      }
-    );
-  };
 }]);
