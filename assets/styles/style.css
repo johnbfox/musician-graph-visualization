@@ -155,6 +155,10 @@ p.description-block{
   margin-bottom: 24px;
 }
 
+.node:hover{
+  cursor: grab;
+}
+
 input:focus{
   outline:0px !important;
   -webkit-appearance:none;

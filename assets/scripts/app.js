@@ -28,7 +28,7 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
     $scope.$watch('graphArtist', function(){
       $scope.autoIndex = -1;
       $scope.focusedArtist = undefined;
-      var url = `/musician-graph/getNames/${$scope.graphArtist}`;
+      var url = `/getNames/${$scope.graphArtist}`;
 
       $http.get(url).then(function(response){
         var autoNames = [];
@@ -48,7 +48,7 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
 
     $scope.submitGraph = function(name){
       $scope.graphArtist = $scope.focusedArtist || name;
-      var url = `/musician-graph/getGraph/${$scope.graphArtist}`;
+      var url = `/getGraph/${$scope.graphArtist}`;
       $scope.isAutocompleteShowing = false;
 
       var svg = d3.select('svg');
@@ -60,71 +60,84 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
 
       $http.get(url).then(function(response){
         var graph = response.data;
-        var gravity = -1* (3000/response.data.nodes.length);
+        var gravity = -1* (4000/response.data.nodes.length);
 
-        var svg = d3.select("#graphVis"),
-            width = +svg.attr("width"),
-            height = +svg.attr("height"),
+        var svg = d3.select('#graphVis'),
+            width = +svg.attr('width'),
+            height = +svg.attr('height'),
             radius = 11;
 
         var color = d3.scaleOrdinal(d3.schemeCategory20);
 
         var simulation = d3.forceSimulation()
-                          .force("link", d3.forceLink().id(function(d) { return d.id; }))
-                          .force("charge", d3.forceManyBody().strength(gravity))
-                          .force("center", d3.forceCenter(width / 2, height / 2))
+                          .force('link', d3.forceLink().id(function(d) { return d.id; }))
+                          .force('charge', d3.forceManyBody().strength(gravity))
+                          .force('center', d3.forceCenter(width / 2, height / 2))
 
-        var link = svg.append("g")
-                      .attr("class", "links")
-                      .selectAll("line")
+        var link = svg.append('g')
+                      .attr('class', 'links')
+                      .selectAll('line')
                       .data(graph.links)
-                      .enter().append("line")
-                      .attr("stroke-width", function(d) { return 3-d.degree; });
+                      .enter().append('line')
+                      .attr('stroke-width', function(d) { return 3-d.degree; });
 
-        var node = svg.append("g")
-                      .attr("class", "nodes")
-                      .selectAll("circle")
+        var node = svg.append('g')
+                      .attr('class', 'nodes')
+                      .selectAll('circle')
                       .data(graph.nodes)
-                      .enter().append("circle")
+                      .enter().append('circle')
                       .attr('stroke', 'black')
-                      .attr('onmouseover', 'evt.target.setAttribute("stroke-width", "1");')
-                      .attr('onmouseoff', 'evt.target.setAttribute("stroke-width", "0");')
-                      .attr("r", function(d){
+                      .attr('stroke-width', 2)
+                      .attr('class', 'node')
+                      .attr('r', function(d){
                         if(d.id === $scope.graphArtist) {
                           return radius;
                         }else{
                           return radius-(3*d.degree);
                         }
                       })
-                      .attr("fill", function(d) {
+                      .attr('fill', function(d) {
                         if(d.id === $scope.graphArtist) {
                           return '#35586C';
                         }else{
                           return colors[d.degree-1];
                         }
                       })
+                      .on('mouseover', function(){
+                        d3.select(this)
+            	           .attr("fill", "orange");
+                      })
+                      .on('mouseout', function(d){
+                        if(d.id === $scope.graphArtist) {
+                          d3.select(this)
+              	           .attr("fill", '#35586C');
+                        }else{
+                          d3.select(this)
+              	           .attr("fill", colors[d.degree-1]);
+                        }
+                      })
                       .call(d3.drag()
-                      .on("start", dragstarted)
-                      .on("drag", dragged)
-                      .on("end", dragended));
+                      .on('start', dragstarted)
+                      .on('drag', dragged)
+                      .on('end', dragended));
 
-                  node.append("title")
+                  node.append('title')
                       .text(function(d) { return d.id; });
 
                   simulation.nodes(graph.nodes)
-                            .on("tick", ticked);
+                            .on('tick', ticked);
 
-                  simulation.force("link")
+                  simulation.force('link')
                             .links(graph.links);
 
                   function ticked() {
-                      node.attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
-                        .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+                      node.attr('cx', function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
+                        .attr('cy', function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
 
-                      link.attr("x1", function(d) { return d.source.x; })
-                          .attr("y1", function(d) { return d.source.y; })
-                          .attr("x2", function(d) { return d.target.x; })
-                          .attr("y2", function(d) { return d.target.y; });
+                      link.attr('x1', function(d) { return d.source.x; })
+                          .attr('y1', function(d) { return d.source.y; })
+                          .attr('x2', function(d) { return d.target.x; })
+                          .attr('y2', function(d) { return d.target.y; });
                   }
 
                   function dragstarted(d) {
@@ -171,10 +184,10 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
 
         var canvas = d3.select('#degreeVis svg');
         canvas.remove();
-        canvas = d3.selectAll("#degreeVis")
-                   .append("svg")
-                   .attr("width", "100%")
-                   .attr("height", "100px");
+        canvas = d3.selectAll('#degreeVis')
+                   .append('svg')
+                   .attr('width', '100%')
+                   .attr('height', '100px');
 
         var circles = canvas.selectAll('circle')
                       .data(response.data.path)
