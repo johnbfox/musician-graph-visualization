@@ -84,6 +84,12 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
             height = +svg.attr('height'),
             radius = 11;
 
+       svg.append('image')
+          .attr('x', 645)
+          .attr('y', 555)
+          .attr('width', 150)
+          .attr('xlink:href', 'images/graph-image.png');
+
         var color = d3.scaleOrdinal(d3.schemeCategory20);
 
         var simulation = d3.forceSimulation()

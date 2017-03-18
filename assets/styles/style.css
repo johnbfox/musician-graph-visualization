@@ -56,7 +56,6 @@ p{
 
 #degreeChart{
   padding: 12px;
-  position: relative;
 }
 
 #graphVis{
@@ -145,7 +144,7 @@ svg{
 
 .autocomplete__suggestion:hover, .active{
   cursor: pointer;
-  background-color: #f9f9f9;
+  background-color: #bdbdbd;
 }
 
 p.description-block{
@@ -163,12 +162,4 @@ p.description-block{
 input:focus{
   outline:0px !important;
   -webkit-appearance:none;
-}
-
-img.legend{
-  width: 150px;
-  position: absolute;
-  z-index: 5;
-  top: 580px;
-  left:660px;
 }
