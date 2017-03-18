@@ -7,7 +7,7 @@ body{
 }
 
 p{
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .top-margin{
@@ -56,6 +56,7 @@ p{
 
 #degreeChart{
   padding: 12px;
+  position: relative;
 }
 
 #graphVis{
@@ -162,4 +163,12 @@ p.description-block{
 input:focus{
   outline:0px !important;
   -webkit-appearance:none;
+}
+
+img.legend{
+  width: 150px;
+  position: absolute;
+  z-index: 5;
+  top: 580px;
+  left:660px;
 }
