@@ -10,6 +10,10 @@ p{
   font-size: 15px;
 }
 
+strong{
+  font-weight: bolder;
+}
+
 .top-margin{
   margin-top:12px;
 }

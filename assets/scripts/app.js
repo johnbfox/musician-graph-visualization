@@ -28,7 +28,7 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
     $scope.$watch('graphArtist', function(){
       $scope.autoIndex = -1;
       $scope.focusedArtist = undefined;
-      var url = `/musician-graph/getNames/${$scope.graphArtist}`;
+      var url = `/getNames/${$scope.graphArtist}`;
 
       $http.get(url).then(function(response){
         var autoNames = [];
@@ -48,7 +48,7 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
 
     $scope.submitGraph = function(name){
       $scope.graphArtist = $scope.focusedArtist || name;
-      var url = `/musician-graph/getGraph/${$scope.graphArtist}`;
+      var url = `/getGraph/${$scope.graphArtist}`;
       $scope.isAutocompleteShowing = false;
 
 
@@ -112,6 +112,9 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
                       .attr('stroke', 'black')
                       .attr('stroke-width', 2)
                       .attr('class', 'node')
+                      .on('dblclick', function(d){
+                        $scope.submitGraph(d.id);
+                      })
                       .attr('r', function(d){
                         if(d.id === $scope.graphArtist) {
                           return radius;
