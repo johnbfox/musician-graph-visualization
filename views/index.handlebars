@@ -4,7 +4,7 @@
       <h2 class="text-center">The Musician Network</h2>
       <h5 class="text-center">By <a href="http://www.johnbfox.com/">John Fox</a></h5>
       <form id="searchForm" ng-submit="submitGraph()">
-        <input type="text" id="from" ng-model="graphArtist" ng-keydown="focusAutocomplete($event)" autocomplete="off" ng-model-options="{debounce: 500}"/>
+        <input type="text" id="from" ng-model="graphArtist" ng-keydown="focusAutocomplete($event)" autocomplete="off" ng-model-options="{debounce: 350}"/>
         <img id="searchButton" ng-click="submitGraph()" src="images/search-icon.png"/>
         <ul class="autocomplete" ng-show="isAutocompleteShowing">
           <li class="autocomplete__suggestion" ng-repeat="item in names" ng-class="{active: item.active}" ng-click="submitGraph(item.name)">
@@ -16,7 +16,7 @@
         Music is a collaborative art.  Musicians play, create, and perform with others throughout
         their careers.  Because of the extensive collaborations, a network of musicians forms.  Each
         circle represents a musician, and a line between two circles reprents a direct collaboration
-        between two musicians. <strong>Hover</strong> over a circle to view the musician's name.
+        between two musicians. <strong>Hover</strong> over a node to view the musician's name.
         <strong>Double click</strong> on a node to drill down.
       </p>
       <p class="description-block">
