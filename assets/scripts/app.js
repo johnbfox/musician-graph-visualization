@@ -48,7 +48,7 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
 
     $scope.submitGraph = function(name){
       $scope.graphArtist = $scope.focusedArtist || name;
-      var url = `/getGraph/${$scope.graphArtist}`;
+      var url = `/musician-graph/getGraph/${$scope.graphArtist}`;
       $scope.isAutocompleteShowing = false;
 
 
