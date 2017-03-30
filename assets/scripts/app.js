@@ -28,7 +28,7 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
     $scope.$watch('graphArtist', function(){
       $scope.autoIndex = -1;
       $scope.focusedArtist = undefined;
-      var url = `/musician-graph/getNames/${$scope.graphArtist}`;
+      var url = `getNames/${$scope.graphArtist}`;
 
       $http.get(url).then(function(response){
         var autoNames = [];
@@ -48,7 +48,7 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
 
     $scope.submitGraph = function(name){
       $scope.graphArtist = $scope.focusedArtist || name;
-      var url = `/musician-graph/getGraph/${$scope.graphArtist}`;
+      var url = `getGraph/${$scope.graphArtist}`;
       $scope.isAutocompleteShowing = false;
 
 
@@ -77,7 +77,7 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
             .text('simple');
 
         var graph = response.data;
-        var gravity = -1* (4000/response.data.nodes.length);
+        var gravity = -1* (4200/(response.data.nodes.length));
 
         var svg = d3.select('#graphVis'),
             width = +svg.attr('width'),
