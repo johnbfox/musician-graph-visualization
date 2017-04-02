@@ -7,7 +7,6 @@ app.config(function($interpolateProvider) {
 app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
 
     $scope.autoIndex = -1;
-    const colors = ['#87CEEB', '#D1EEEE', '#D1EEEE']
 
     $scope.focusAutocomplete = function($event){
       if($scope.autoIndex > -1){
@@ -46,57 +45,79 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
       });
     });
 
+    $scope.submitWithCurrent = function(){
+      $scope.submitGraph($scope.graphArtist);
+    }
+
     $scope.submitGraph = function(name){
       $scope.graphArtist = $scope.focusedArtist || name;
       var url = `getGraph/${$scope.graphArtist}`;
       $scope.isAutocompleteShowing = false;
 
+      // Force diagram constants
+      var graphContainerId = '#graphContainer',
+          tooltipId = '#tt-name',
+          width = 800,
+          height = 600,
+          radius = 11,
+          nodeColors = ['#35586C', '#87CEEB', '#D1EEEE'],
+          nodeHoverColor = 'orange',
+          legendImagePath = 'images/legend-image.png',
+          legendX = 645,
+          legendY = 555,
+          legendWidth = 150;
+
 
       var svg = d3.select('svg');
       svg.remove();
-      svg = d3.select('#graphContainer').append('svg');
+      svg = d3.select(graphContainerId).append('svg');
+
       svg.attr('id', 'graphVis')
-         .attr('width', 800)
-         .attr('height', 600);
+         .attr('width', width)
+         .attr('height', height);
 
       $http.get(url).then(function(response){
 
-        var tooltip = d3.select('#graphContainer')
-            .append('div')
-            .attr('class', 'my-tooltip')
-            .style('position', 'absolute')
-            .style('z-index', '10')
-            .style('visibility', 'hidden')
-            .style('background-color', 'white')
-            .style('padding', '5px')
-            .style('border-style', 'solid')
-            .style('border-width', 'thin');
+        // Response dependent constants
+        var gravity = -1* (4200/(response.data.nodes.length)),
+            graph = response.data;
+
+        if(response.data.nodes.length === 0){
+          console.log('Artist not found');
+
+          var artistNotFound = svg.append('text')
+                        .attr('x', 260)
+                        .attr('y', 280)
+                        .attr('fill', '#f08080')
+                        .attr('dy', '.35em')
+                        .attr('font-size', '36px')
+                        .text('Artist Not Found');
+
+          return;
+        }
+
+        var tooltip = createTooltip();
 
         tooltip.append('div')
             .attr('id', 'tt-name')
             .text('simple');
 
-        var graph = response.data;
-        var gravity = -1* (4200/(response.data.nodes.length));
-
-        var svg = d3.select('#graphVis'),
-            width = +svg.attr('width'),
-            height = +svg.attr('height'),
-            radius = 11;
-
+       //Add the legend to the graph
        svg.append('image')
-          .attr('x', 645)
-          .attr('y', 555)
-          .attr('width', 150)
-          .attr('xlink:href', 'images/graph-image.png');
+          .attr('x', legendX)
+          .attr('y', legendY)
+          .attr('width', legendWidth)
+          .attr('xlink:href', legendImagePath);
 
         var color = d3.scaleOrdinal(d3.schemeCategory20);
 
+        // Define the force simulation
         var simulation = d3.forceSimulation()
                           .force('link', d3.forceLink().id(function(d) { return d.id; }))
                           .force('charge', d3.forceManyBody().strength(gravity))
                           .force('center', d3.forceCenter(width / 2, height / 2))
 
+        // Draw the relationship lines
         var link = svg.append('g')
                       .attr('class', 'links')
                       .selectAll('line')
@@ -104,29 +125,28 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
                       .enter().append('line')
                       .attr('stroke-width', function(d) { return 3-d.degree; });
 
+        // Draw the artist nodes
         var node = svg.append('g')
                       .attr('class', 'nodes')
                       .selectAll('circle')
                       .data(graph.nodes)
                       .enter().append('circle')
-                      .attr('stroke', 'black')
-                      .attr('stroke-width', 2)
                       .attr('class', 'node')
                       .on('dblclick', function(d){
                         $scope.submitGraph(d.id);
                       })
                       .attr('r', function(d){
-                        if(d.id === $scope.graphArtist) {
+                        if(d.id == response.data.artist) {
                           return radius;
                         }else{
                           return radius-(3*d.degree);
                         }
                       })
                       .attr('fill', function(d) {
-                        if(d.id === $scope.graphArtist) {
-                          return '#35586C';
+                        if(d.id == response.data.artist) {
+                          return nodeColors[0];
                         }else{
-                          return colors[d.degree-1];
+                          return nodeColors[d.degree];
                         }
                       })
                       .on('mouseover', function(d){
@@ -134,20 +154,20 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
                         var curY = cur.attr('cy');
                         var curX = cur.attr('cx');
                         d3.select(this)
-            	           .attr('fill', 'orange');
-                         tooltip.select("#tt-name").text(d.id);
-                         return tooltip.style("visibility", "visible");
+            	           .attr('fill', nodeHoverColor);
+                         tooltip.select(tooltipId).text(d.id);
+                         return tooltip.style('visibility', 'visible');
                       })
                       .on('mousemove', function(){
-                        return tooltip.style("top", (d3.event.pageY + 15) + "px").style("left", (d3.event.pageX) + "px");
+                        return tooltip.style('top', (d3.event.pageY + 15) + 'px').style('left', (d3.event.pageX) + 'px');
                       })
                       .on('mouseout', function(d){
                         if(d.id === $scope.graphArtist) {
                           d3.select(this)
-              	           .attr('fill', '#35586C');
+              	           .attr('fill', nodeColors[0]);
                         }else{
                           d3.select(this)
-              	           .attr('fill', colors[d.degree-1]);
+              	           .attr('fill', nodeColors[d.degree]);
                         }
                         return tooltip.style('visibility', 'hidden');
                       })
@@ -156,43 +176,58 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
                       .on('drag', dragged)
                       .on('end', dragended));
 
-                  simulation.nodes(graph.nodes)
-                            .on('tick', ticked);
+          simulation.nodes(graph.nodes)
+                    .on('tick', ticked);
 
-                  simulation.force('link')
-                            .links(graph.links);
+          simulation.force('link')
+                    .links(graph.links);
 
-                  function ticked() {
-                      node.attr('cx', function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
-                        .attr('cy', function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+          function ticked() {
+              node.attr('cx', function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
+                .attr('cy', function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
 
-                      link.attr('x1', function(d) { return d.source.x; })
-                          .attr('y1', function(d) { return d.source.y; })
-                          .attr('x2', function(d) { return d.target.x; })
-                          .attr('y2', function(d) { return d.target.y; });
-                  }
+              link.attr('x1', function(d) { return d.source.x; })
+                  .attr('y1', function(d) { return d.source.y; })
+                  .attr('x2', function(d) { return d.target.x; })
+                  .attr('y2', function(d) { return d.target.y; });
+          }
 
-                  function dragstarted(d) {
-                    if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-                    d.fx = d.x;
-                    d.fy = d.y;
-                    tooltip.style('visibility', 'hidden');
-                  }
+          function dragstarted(d) {
+            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+            tooltip.style('visibility', 'hidden');
+          }
 
-                  function dragged(d) {
-                    d.fx = d3.event.x;
-                    d.fy = d3.event.y;
-                    tooltip.style('visibility', 'hidden');
-                  }
+          function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+            tooltip.style('visibility', 'hidden');
+          }
 
-                  function dragended(d) {
-                    if (!d3.event.active) simulation.alphaTarget(0);
-                    d.fx = null;
-                    d.fy = null;
-                    tooltip.style('visibility', 'hidden');
-                  }
+          function dragended(d) {
+            if (!d3.event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+            tooltip.style('visibility', 'hidden');
+          }
       });
     }
 
     $scope.submitGraph('Bob Dylan');
 }]);
+
+
+// Helper functions
+function createTooltip(){
+  return d3.select('#graphContainer')
+      .append('div')
+      .attr('class', 'my-tooltip')
+      .style('position', 'absolute')
+      .style('z-index', '10')
+      .style('visibility', 'hidden')
+      .style('background-color', 'white')
+      .style('padding', '5px')
+      .style('border-style', 'solid')
+      .style('border-width', 'thin');
+}

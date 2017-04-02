@@ -104,14 +104,13 @@ app.get('/getNames/:name', function(request, response){
 
 app.get('/getGraph/:id', function(request, response){
 
-  var artist = request.params.id;
-
+  var artist = toNameCase(request.params.id);
+  console.log(artist);
   var session = driver.session();
 
   var query = `MATCH (a:Artist {name:{artist}})-[r*1..2]->(d) RETURN distinct a, r, d`;
 
   session.run(query, {artist:artist}).then(function(result){
-
     var records = result.records;
 
     var nodesTemp = {};
@@ -155,6 +154,7 @@ app.get('/getGraph/:id', function(request, response){
     }
 
     var responseJson = {
+      'artist': artist,
       'nodes': nodes,
       'links': links
     };
@@ -168,3 +168,36 @@ app.get('/getGraph/:id', function(request, response){
  */
 app.listen(process.env.PORT || port);
 console.log('Express started on port ' + ( process.env.PORT || port ) );
+
+function toNameCase(name){
+  if(name && name.length > 0){
+
+    const tokens = name.split(' ');
+    const result = [];
+
+    if (tokens.length != 2){
+      return name;
+    }
+    
+    for(let token of tokens){
+      console.log(token);
+      let str = token[0].toUpperCase();
+
+      for(let i = 1; i < token.length; i++){
+        str += token[i].toLowerCase();
+      }
+
+      result.push(str);
+    }
+
+    let returnString = ''
+    for(let i = 0; i < result.length; i++){
+      returnString += result[i];
+      if(i != result.length - 1){
+        returnString += ' '
+      }
+    }
+
+    return returnString;
+  }
+}
