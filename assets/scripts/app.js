@@ -65,7 +65,12 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
           legendImagePath = 'images/legend-image.png',
           legendX = 645,
           legendY = 555,
-          legendWidth = 150;
+          legendWidth = 150,
+          errorMessageX = 260,
+          errorMessageY = 280,
+          errorMessageColor= '#f08080',
+          errorMessageFontSize = '36px',
+          errorMessageText = 'Artist Not Found';
 
 
       var svg = d3.select('svg');
@@ -83,16 +88,14 @@ app.controller('myCtrl', ['$scope', '$http' , function($scope, $http) {
             graph = response.data;
 
         if(response.data.nodes.length === 0){
-          console.log('Artist not found');
 
           var artistNotFound = svg.append('text')
-                        .attr('x', 260)
-                        .attr('y', 280)
-                        .attr('fill', '#f08080')
+                        .attr('x', errorMessageX)
+                        .attr('y', errorMessageY)
+                        .attr('fill', errorMessageColor)
                         .attr('dy', '.35em')
-                        .attr('font-size', '36px')
-                        .text('Artist Not Found');
-
+                        .attr('font-size', errorMessageFontSize)
+                        .text(errorMessageText);
           return;
         }
 
