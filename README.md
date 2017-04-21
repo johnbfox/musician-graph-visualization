@@ -19,7 +19,7 @@ Navigate to localhost:3000 in your browser to run the application.
 
 ## Links
 
-The visualization is the second piece of a two part project.  The first piece of project is a web spider/screen scraper that parses wikipedia to recreate the network of musicians.  Find that scraper (here)[https://github.com/johnbfox/ArtistGraphCrawler].
+The visualization is the second piece of a two part project.  The first piece of project is a web spider/screen scraper that parses wikipedia to recreate the network of musicians.  Find that scraper [here](https://github.com/johnbfox/ArtistGraphCrawler).
 
 I wrote a short blog post describing the motivation for this project.
 https://medium.com/@johnbfoxy/the-musician-network-366d9c5066be
